@@ -2,7 +2,7 @@ package mempool
 
 import (
 	"encoding/json"
-	"github.com/gophero/goal/btcx/mempool/model"
+	"github.com/gophero/goal/web3/btcx/mempool/model"
 )
 
 func (c *MempoolClient) GetPrices() (model.Price, error) {

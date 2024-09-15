@@ -1,13 +1,25 @@
-package web3
+package util
 
 import (
 	"encoding/hex"
+
+	"github.com/btcsuite/btcd/btcutil"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
+	"github.com/gophero/goal/web3/btcx"
+
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/btcec/v2/schnorr"
-	"github.com/btcsuite/btcd/btcutil"
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/txscript"
 )
+
+func ParseAddress(addr string, net btcx.Net) (btcutil.Address, error) {
+	return btcutil.DecodeAddress(addr, net.Params())
+}
+
+func ParseTxHash(txid string) (*chainhash.Hash, error) {
+	return chainhash.NewHashFromStr(txid)
+}
 
 type Wallet struct {
 	privateKey string
@@ -56,6 +68,7 @@ func ImportPrivateKeyToP2TR(privateKey string, net *chaincfg.Params) string {
 	return ImportPrivateKeyHexToP2TR(privKey, net)
 }
 
+// TODO: implement this api
 func GetAddressTransactions(addr string, url string) {
-
+	panic("not implemented")
 }

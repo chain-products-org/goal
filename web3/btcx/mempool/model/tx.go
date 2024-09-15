@@ -3,8 +3,8 @@ package model
 import (
 	"encoding/hex"
 	"github.com/btcsuite/btcd/wire"
-	"github.com/gophero/goal/btcx"
-	"github.com/gophero/goal/btcx/util"
+	"github.com/gophero/goal/web3/btcx"
+	"github.com/gophero/goal/web3/btcx/util"
 	"github.com/gophero/goal/logx"
 )
 

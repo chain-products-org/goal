@@ -2,7 +2,7 @@ package mempool
 
 import (
 	"fmt"
-	"github.com/gophero/goal/btcx"
+	"github.com/gophero/goal/web3/btcx"
 	"github.com/pkg/errors"
 	"io"
 	"net/http"

@@ -3,7 +3,7 @@ package ord_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gophero/goal/btcx/ord"
+	"github.com/gophero/goal/web3/btcx/ord"
 	"github.com/gophero/goal/cmd"
 	"testing"
 
