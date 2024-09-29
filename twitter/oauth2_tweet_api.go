@@ -22,11 +22,11 @@ func (o *OAuth2TweetApi) PostTweet(accessToken string, param PostTweetParam) (*P
 	var err error
 	url := fmtUrl(oauth2ApiUrlFormat, "/tweets")
 	body := bytes.NewReader(param.Json())
-	req, err := http.NewRequest(http.MethodGet, url, body)
+	req, err := http.NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return &PostTweetResp{}, errors.Wrapf(ErrApi, "request error: %v", err)
 	}
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", "Bearer "+accessToken)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

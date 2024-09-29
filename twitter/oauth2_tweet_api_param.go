@@ -14,6 +14,7 @@ type PostTweetParam struct {
 	Media                 Media  `json:"media"`
 	Poll                  Poll   `json:"poll"`
 	QuoteTweetId          string `json:"quote_tweet_id"`
+	Reply                 Reply  `json:"reply"`
 	ReplySettings         string `json:"reply_settings"`
 	Text                  string `json:"text"`
 }
