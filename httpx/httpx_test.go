@@ -152,19 +152,17 @@ func TestHttp_GetString(t *testing.T) {
 
 	logger := testx.Wrap(t)
 	logger.Case("using GetString method to get html from localhost:1234")
-	s := httpx.GetString("http://localhost:1234/html", func(err error) {
-		if err != nil {
-			logger.Fail("should has no error but found: %v", err)
-		} else {
-			logger.Pass("request should be successful")
-		}
-	})
+	s, err := httpx.GetString("http://localhost:1234/html")
+	if err != nil {
+		logger.Fail("should has no error but found: %v", err)
+	} else {
+		logger.Pass("request should be successful")
+	}
 	logger.Require(s == html, "response html should match the dest")
 
 	logger.Case("using GetString method to get string from unknown url, should be failed")
-	httpx.GetString("http://localhost:1234/unknown", func(err error) {
-		logger.Require(err != nil, "request should be unsuccessful: %v", err)
-	})
+	_, err = httpx.GetString("http://localhost:1234/unknown")
+	logger.Require(err != nil, "request should be unsuccessful: %v", err)
 }
 
 func TestHttp_MustGetString(t *testing.T) {
@@ -236,9 +234,8 @@ func TestHttp_GetBytes(t *testing.T) {
 	logger.Title("using GetBytes or MustGetBytes method to get bytes")
 	logger.Case("request an image from baidu")
 	url := "https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png"
-	bs := httpx.GetBytes(url, func(err error) {
-		logger.Require(err == nil, "request should be successful with no error")
-	})
+	bs, err := httpx.GetBytes(url)
+	logger.Require(err == nil, "request should be successful with no error")
 	logger.Pass("request should be successful")
 	logger.Require(len(bs) > 0, "response data should has content")
 
@@ -261,9 +258,8 @@ func TestHttp_GetJsonObject(t *testing.T) {
 	logger.Title("using GetJsonObject or MustGetJsonObject method to get object from json response")
 
 	logger.Case("GetJsonObject: request json from localhost:1234 and unmarshal it to user struct")
-	u := httpx.GetJson("http://localhost:1234/json", func(err error) {
-		logger.Require(err == nil, "request should be successful")
-	}, &user{})
+	u, err := httpx.GetJson("http://localhost:1234/json", &user{})
+	logger.Require(err == nil, "request should be successful")
 	logger.Require(u != nil, "request should be successful")
 	bs, _ := json.Marshal(u)
 	logger.Require(string(bs) == jsonstr, "return user should be correct")
@@ -354,7 +350,7 @@ func TestPostForm(t *testing.T) {
 
 	logger.Case("test post html")
 	url := "http://localhost:1234/html"
-	s, err := httpx.PostFormErr(url, nil)
+	s, err := httpx.PostForm(url, nil)
 	logger.Require(err == nil, "post request should no error")
 	logger.Require(html == s, "post result with string should be correct")
 }
@@ -367,7 +363,7 @@ func TestPostJson(t *testing.T) {
 
 	logger.Case("test post json")
 	url := "http://localhost:1234/json"
-	s, err := httpx.PostJsonErr(url, nil)
+	s, err := httpx.PostJson(url, nil)
 	logger.Require(err == nil, "post request should no error")
 	logger.Require(html == s, "post result with string should be correct")
 }

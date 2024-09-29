@@ -38,14 +38,13 @@ func ExampleNewBuilder() {
 func ExampleGetString() {
 	startServer()
 
-	s := httpx.GetString("http://localhost:1234/json", func(err error) {
-		if err != nil {
-			log.Fatalf("should has no error but found: %v", err)
-		}
-	})
+	s, err := httpx.GetString("http://localhost:1234/json")
+	if err != nil {
+		log.Fatalf("should has no error but found: %v", err)
+	}
 	fmt.Println(s)
 	// Output:
-	// {"name":"张三","age":20,"height":70.5}
+	// {"name":"lily","age":20,"height":70.5}
 }
 
 func ExampleMustGetString() {
@@ -54,7 +53,7 @@ func ExampleMustGetString() {
 	s := httpx.MustGetString("http://localhost:1234/json")
 	fmt.Println(s)
 	// Output:
-	// {"name":"张三","age":20,"height":70.5}
+	// {"name":"lily","age":20,"height":70.5}
 }
 
 func ExampleMustGet() {
@@ -70,7 +69,7 @@ func ExampleMustGet() {
 	})
 	fmt.Println(s)
 	// Output:
-	// {"name":"张三","age":20,"height":70.5}
+	// {"name":"lily","age":20,"height":70.5}
 }
 
 func ExampleGet() {
@@ -89,18 +88,19 @@ func ExampleGet() {
 
 	fmt.Println(s)
 	// Output:
-	// {"name":"张三","age":20,"height":70.5}
+	// {"name":"lily","age":20,"height":70.5}
 }
 
 func ExampleGetBytes() {
 	startServer()
 
-	bs := httpx.GetBytes("http://localhost:1234/json", func(err error) {
-		panic(err)
-	})
+	bs, err := httpx.GetBytes("http://localhost:1234/json")
+	if err != nil {
+		fmt.Println(err)
+	}
 	fmt.Println(string(bs))
 	// Output:
-	// {"name":"张三","age":20,"height":70.5}
+	// {"name":"lily","age":20,"height":70.5}
 }
 
 func ExampleMustGetBytes() {
@@ -109,7 +109,7 @@ func ExampleMustGetBytes() {
 	bs := httpx.MustGetBytes("http://localhost:1234/json")
 	fmt.Println(string(bs))
 	// Output:
-	// {"name":"张三","age":20,"height":70.5}
+	// {"name":"lily","age":20,"height":70.5}
 }
 
 type user struct {
@@ -121,14 +121,14 @@ type user struct {
 func ExampleGetJson() {
 	startServer()
 
-	u := httpx.GetJson("http://localhost:1234/json", func(err error) {
-		panic(err)
-	}, &user{})
-
+	u, err := httpx.GetJson("http://localhost:1234/json", &user{})
+	if err != nil {
+		fmt.Println(err)
+	}
 	bs, _ := json.Marshal(u)
 	fmt.Println(string(bs))
 	// Output:
-	// {"name":"张三","age":20,"height":70.5}
+	// {"name":"lily","age":20,"height":70.5}
 }
 
 func ExampleMustGetJson() {
@@ -139,5 +139,5 @@ func ExampleMustGetJson() {
 	bs, _ := json.Marshal(u)
 	fmt.Println(string(bs))
 	// Output:
-	// {"name":"张三","age":20,"height":70.5}
+	// {"name":"lily","age":20,"height":70.5}
 }

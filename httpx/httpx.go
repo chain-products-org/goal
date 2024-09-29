@@ -182,39 +182,53 @@ func (b *httpBuilder) WhenFailed(handler ErrHandler) *httpBuilder {
 // convenient GET methods
 
 func MustGetString(url string, headers ...H) string {
-	return GetString(url, func(err error) {
+	return getString(url, func(err error) {
 		panic(err)
 	}, headers...)
 }
 
-func GetString(url string, errHandler ErrHandler, headers ...H) string {
+func getString(url string, errHandler ErrHandler, headers ...H) string {
 	var s string
 	NewBuilder(url).WhenSuccess(func(resp *http.Response) {
 		bs, err := io.ReadAll(resp.Body)
 		if err != nil {
-			panic(fmt.Sprintf("read response data error: %v", err))
+			errHandler(fmt.Errorf("read response data error: %v", err))
+			return
 		}
 		s = string(bs)
 	}).WhenFailed(errHandler).Headers(headers...).Get()
 	return s
 }
 
+func GetString(url string, headers ...H) (string, error) {
+	var err error
+	s := getString(url, func(e error) { err = e }, headers...)
+	return s, err
+}
+
 func MustGetBytes(url string, headers ...H) []byte {
-	return GetBytes(url, func(err error) {
+	return getBytes(url, func(err error) {
 		panic(fmt.Sprintf("request failed: %v", err))
 	}, headers...)
 }
 
-func GetBytes(url string, errHandler ErrHandler, headers ...H) []byte {
+func getBytes(url string, errHandler ErrHandler, headers ...H) []byte {
 	var ret []byte
 	NewBuilder(url).WhenSuccess(func(resp *http.Response) {
 		bytes, err := io.ReadAll(resp.Body)
 		if err != nil {
-			panic(fmt.Sprintf("read reponse data error: %v", err))
+			errHandler(fmt.Errorf("read reponse data error: %v", err))
+			return
 		}
 		ret = bytes
 	}).WhenFailed(errHandler).Headers(headers...).Get()
 	return ret
+}
+
+func GetBytes(url string, headers ...H) ([]byte, error) {
+	var err error
+	bs := getBytes(url, func(e error) { err = e }, headers...)
+	return bs, err
 }
 
 func MustGet(url string, handler Handler, headers ...H) {
@@ -228,24 +242,32 @@ func Get(url string, handler Handler, errHandler ErrHandler, headers ...H) {
 }
 
 func MustGetJson[T any](url string, t T, headers ...H) T {
-	GetJson(url, func(err error) {
+	getJson(url, func(err error) {
 		panic(fmt.Sprintf("request failed: %v", err))
 	}, t, headers...)
 	return t
 }
 
-func GetJson[T any](url string, errHandler ErrHandler, t T, headers ...H) T {
+func getJson[T any](url string, errHandler ErrHandler, t T, headers ...H) T {
 	NewBuilder(url).WhenSuccess(func(resp *http.Response) {
 		bs, err := io.ReadAll(resp.Body)
 		if err != nil {
-			panic(fmt.Sprintf("read response data error: %v", err))
+			errHandler(fmt.Errorf("read response data error: %v", err))
+			return
 		}
 		err = json.Unmarshal(bs, t)
 		if err != nil {
-			panic(fmt.Sprintf("unmarshal error: %v", err))
+			errHandler(fmt.Errorf("unmarshal error: %v", err))
+			return
 		}
 	}).WhenFailed(errHandler).Headers(headers...).Get()
 	return t
+}
+
+func GetJson[T any](url string, t T, headers ...H) (T, error) {
+	var err error
+	obj := getJson(url, func(e error) { err = e }, t, headers...)
+	return obj, err
 }
 
 func GetResp(url string, headers ...H) *R {
@@ -258,32 +280,33 @@ func GetResp(url string, headers ...H) *R {
 // convenient POST methods
 
 func MustPostJson(url string, body io.Reader, headers ...H) string {
-	return PostJson(url, body, func(err error) {
+	return postJson(url, body, func(err error) {
 		panic(err)
 	}, headers...)
 }
 
-func PostJson(url string, body io.Reader, errHandler ErrHandler, headers ...H) string {
+func postJson(url string, body io.Reader, errHandler ErrHandler, headers ...H) string {
 	var s string
 	NewBuilder(url).ContentType(ContentTypeApplicationJson).Body(body).WhenSuccess(func(resp *http.Response) {
 		bs, err := io.ReadAll(resp.Body)
 		if err != nil {
-			panic(fmt.Sprintf("read response data error: %v", err))
+			errHandler(fmt.Errorf("read response data error: %v", err))
+			return
 		}
 		s = string(bs)
 	}).WhenFailed(errHandler).Headers(headers...).Post()
 	return s
 }
 
-func PostJsonErr(url string, body io.Reader, headers ...H) (string, error) {
+func PostJson(url string, body io.Reader, headers ...H) (string, error) {
 	var err error
-	r := PostJson(url, body, func(e error) {
+	r := postJson(url, body, func(e error) {
 		err = e
 	}, headers...)
 	return r, err
 }
 
-func PostJsonResp(url string, body io.Reader, headers ...H) *R {
+func PostJsonr(url string, body io.Reader, headers ...H) *R {
 	var resp *http.Response
 	var err error
 	NewBuilder(url).ContentType(ContentTypeApplicationJson).Body(body).
@@ -294,17 +317,18 @@ func PostJsonResp(url string, body io.Reader, headers ...H) *R {
 }
 
 func MustPostForm(url string, body io.Reader, headers ...H) string {
-	return PostForm(url, body, func(err error) {
+	return postForm(url, body, func(err error) {
 		panic(err)
 	}, headers...)
 }
 
-func PostForm(url string, body io.Reader, errHandler ErrHandler, headers ...H) string {
+func postForm(url string, body io.Reader, errHandler ErrHandler, headers ...H) string {
 	var s string
 	NewBuilder(url).ContentType(ContentTypeApplicationFormUrlencoded).Body(body).WhenSuccess(func(resp *http.Response) {
 		bs, err := io.ReadAll(resp.Body)
 		if err != nil {
-			panic(fmt.Sprintf("read response data error: %v", err))
+			errHandler(fmt.Errorf("read response data error: %v", err))
+			return
 		}
 		if len(bs) > 0 {
 			s = string(bs)
@@ -313,15 +337,15 @@ func PostForm(url string, body io.Reader, errHandler ErrHandler, headers ...H) s
 	return s
 }
 
-func PostFormErr(url string, body io.Reader, headers ...H) (string, error) {
+func PostForm(url string, body io.Reader, headers ...H) (string, error) {
 	var err error
-	s := PostForm(url, body, func(e error) {
+	s := postForm(url, body, func(e error) {
 		err = e
 	}, headers...)
 	return s, err
 }
 
-func PostFormResp(url string, body io.Reader, headers ...H) *R {
+func PostFormr(url string, body io.Reader, headers ...H) *R {
 	var resp *http.Response
 	var err error
 	NewBuilder(url).ContentType(ContentTypeApplicationFormUrlencoded).Body(body).
@@ -332,21 +356,28 @@ func PostFormResp(url string, body io.Reader, headers ...H) *R {
 }
 
 func MustPostBytes(url string, ct ContentType, body io.Reader, headers ...H) []byte {
-	return PostBytes(url, ct, body, func(err error) {
+	return postBytes(url, ct, body, func(err error) {
 		panic(fmt.Sprintf("request failed: %v", err))
 	}, headers...)
 }
 
-func PostBytes(url string, ct ContentType, body io.Reader, errHandler ErrHandler, headers ...H) []byte {
+func postBytes(url string, ct ContentType, body io.Reader, errHandler ErrHandler, headers ...H) []byte {
 	var ret []byte
 	NewBuilder(url).ContentType(ct).Body(body).WhenSuccess(func(resp *http.Response) {
 		bytes, err := io.ReadAll(resp.Body)
 		if err != nil {
-			panic(fmt.Sprintf("read reponse data error: %v", err))
+			errHandler(fmt.Errorf("read reponse data error: %v", err))
+			return
 		}
 		ret = bytes
 	}).WhenFailed(errHandler).Headers(headers...).Post()
 	return ret
+}
+
+func PostBytes(url string, ct ContentType, body io.Reader, headers ...H) ([]byte, error) {
+	var err error
+	ret := postBytes(url, ct, body, func(e error) { err = e }, headers...)
+	return ret, err
 }
 
 func MustPost(url string, ct ContentType, body io.Reader, handler Handler, headers ...H) {
@@ -359,23 +390,30 @@ func Post(url string, ct ContentType, body io.Reader, handler Handler, errHandle
 	NewBuilder(url).ContentType(ct).Body(body).WhenSuccess(handler).WhenFailed(errHandler).Headers(headers...).Post()
 }
 
-func MustPostJsonObject[T any](url string, ct ContentType, body io.Reader, t T, headers ...H) T {
-	PostJsonObject(url, ct, body, func(err error) {
+func MustPostJsonObj[T any](url string, body io.Reader, t T, headers ...H) T {
+	postJsonObj(url, body, func(err error) {
 		panic(fmt.Sprintf("request failed: %v", err))
 	}, t, headers...)
 	return t
 }
 
-func PostJsonObject[T any](url string, ct ContentType, body io.Reader, errHandler ErrHandler, t T, headers ...H) T {
-	NewBuilder(url).ContentType(ct).Body(body).WhenSuccess(func(resp *http.Response) {
+func postJsonObj[T any](url string, body io.Reader, errHandler ErrHandler, t T, headers ...H) T {
+	NewBuilder(url).ContentType(ContentTypeApplicationJson).Body(body).WhenSuccess(func(resp *http.Response) {
 		bs, err := io.ReadAll(resp.Body)
 		if err != nil {
-			panic(fmt.Sprintf("read response data error: %v", err))
+			errHandler(fmt.Errorf("read response data error: %v", err))
+			return
 		}
 		err = json.Unmarshal(bs, t)
 		if err != nil {
-			panic(fmt.Sprintf("unmarshal error: %v", err))
+			errHandler(fmt.Errorf("unmarshal error: %v", err))
 		}
 	}).WhenFailed(errHandler).Headers(headers...).Post()
 	return t
+}
+
+func PostJsonObj[T any](url string, body io.Reader, t T, headers ...H) (T, error) {
+	var err error
+	ret := postJsonObj(url, body, func(e error) { err = e }, t, headers...)
+	return ret, err
 }
