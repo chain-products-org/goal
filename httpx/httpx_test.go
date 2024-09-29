@@ -14,12 +14,12 @@ import (
 
 const (
 	html    = `<html><head>test</head><body><h1>test page!</h1></body></html>`
-	jsonstr = `{"name":"张三","age":20,"height":70.5}`
+	jsonstr = `{"name":"lily","age":20,"height":70.5}`
 )
 
 var srv *http.Server
 
-// startServer 启动模拟 api 的 http 服务
+// startServer will start a http server for test purpose
 func startServer() *http.Server {
 	if srv != nil {
 		return srv
@@ -133,7 +133,7 @@ func jsonToUser(r io.Reader, logger *testx.Logger) {
 		Age    int     `json:"age"`
 		Height float32 `json:"height"`
 	}
-	var u = new(user)
+	u := new(user)
 	err = json.Unmarshal(body, u)
 	if err != nil {
 		logger.Fail("response body should be able to unmarshal to struct but failed: %v", err)
@@ -197,9 +197,8 @@ func TestHttp_MustGet(t *testing.T) {
 	})
 
 	logger.Case("using MustGet method to get unknown url from localhost:1234, should be failed")
-	// 包装为匿名函数，以便能够捕获异常
 	func() {
-		// 捕获异常
+		// catch the error
 		defer func() {
 			err := recover()
 			logger.Require(err != nil, "request should be failed: %v", err)
@@ -276,6 +275,28 @@ func TestHttp_GetJsonObject(t *testing.T) {
 	logger.Require(string(bs) == jsonstr, "return user should be correct")
 }
 
+func TestHttp_GetResp(t *testing.T) {
+	startServer()
+
+	type user struct {
+		Name   string  `json:"name"`
+		Age    int     `json:"age"`
+		Height float32 `json:"height"`
+	}
+
+	logger := testx.Wrap(t)
+	logger.Title("using GetJsonObject or MustGetJsonObject method to get object from json response")
+
+	logger.Case("GetResp: request json from localhost:1234 and unmarshal it to user struct")
+	r := httpx.GetResp("http://localhost:1234/json")
+	logger.Require(r != nil, "request should be successful")
+	bs := r.Clone().Bytes()
+	logger.Require(string(bs) == jsonstr, "return user string should be correct")
+	u := r.Clone().JsonObj(&user{})
+	bs, _ = json.Marshal(u)
+	logger.Require(string(bs) == jsonstr, "return user bytes should be correct")
+}
+
 // ========== POST method tests ==========
 
 func TestSimplePost(t *testing.T) {
@@ -283,8 +304,6 @@ func TestSimplePost(t *testing.T) {
 
 	logger := testx.Wrap(t)
 	logger.Title("test basic post request")
-
-	// Post请求用于向服务器发送资源，这里的查询并不符合restful规范
 
 	logger.Case("simplest post html")
 	var s string
@@ -327,50 +346,28 @@ func TestSimplePost(t *testing.T) {
 	logger.Require(js == jsonstr, "post result with string should be correct")
 }
 
-func TestRequest(t *testing.T) {
+func TestPostForm(t *testing.T) {
 	startServer()
 
 	logger := testx.Wrap(t)
 	logger.Title("test request")
 
 	logger.Case("test post html")
-	var s string
-	httpx.NewBuilder("http://localhost:1234/html").WhenSuccess(func(resp *http.Response) {
-		bytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			logger.Fail("should can read response data, but got error: %v", err)
-		} else {
-			logger.Pass("should has no error")
-		}
-		if bytes == nil {
-			logger.Fail("should has body but not found")
-		} else {
-			logger.Pass("should has body")
-		}
-		s = string(bytes)
-	}).WhenFailed(func(err error) {
-		logger.Require(err == nil, "request should be successful")
-	}).ContentType(httpx.ContentTypeApplicationFormUrlencoded).Request(http.MethodGet)
+	url := "http://localhost:1234/html"
+	s, err := httpx.PostFormErr(url, nil)
+	logger.Require(err == nil, "post request should no error")
 	logger.Require(html == s, "post result with string should be correct")
+}
 
-	logger.Case("post json")
-	var js string
-	httpx.NewBuilder("http://localhost:1234/json").WhenSuccess(func(resp *http.Response) {
-		bytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			logger.Fail("should can read response data, but got error: %v", err)
-		} else {
-			logger.Pass("should has no error")
-		}
-		if bytes == nil {
-			logger.Fail("should has body but not found")
-		} else {
-			logger.Pass("should has body")
-		}
-		js = string(bytes)
-	}).WhenFailed(func(err error) {
-		logger.Require(err == nil, "request should be successful")
-	}).ContentType(httpx.ContentTypeApplicationJson).Request(http.MethodPost)
+func TestPostJson(t *testing.T) {
+	startServer()
 
-	logger.Require(js == jsonstr, "post result with string should be correct")
+	logger := testx.Wrap(t)
+	logger.Title("test request")
+
+	logger.Case("test post json")
+	url := "http://localhost:1234/json"
+	s, err := httpx.PostJsonErr(url, nil)
+	logger.Require(err == nil, "post request should no error")
+	logger.Require(html == s, "post result with string should be correct")
 }

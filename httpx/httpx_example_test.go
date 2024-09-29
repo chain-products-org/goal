@@ -10,24 +10,25 @@ import (
 	"github.com/gophero/goal/httpx"
 )
 
-// 运行测试时会执行 example 代码，示例方法必须使用 fmt.println 输出，最后约定用 Output 输出一致的结果
-// 打印结果，如后边的 Output 输出结果必须一致，否则测试时会失败
+// When running tests, the example code will be executed, and the example method must use fmt.println to output.
+// In the end, the agreed output must be consistent with the Output to print the results, as inconsistent results
+// will cause the test to fail.
 
 func ExampleNewBuilder() {
-	// 启动示例 http 服务
+	// start a test http server
 	startServer()
 
 	var ret string
-	// 构建 get 请求
-	httpx.NewBuilder("http://localhost:1234/html").WhenSuccess(func(resp *http.Response) { // 请求成功处理
+	// build a get request
+	httpx.NewBuilder("http://localhost:1234/html").WhenSuccess(func(resp *http.Response) { // request success
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			log.Fatalf("response body should be readable but not: %v", err)
 		}
 		ret = string(body)
-	}).WhenFailed(func(err error) { // 请求失败处理
+	}).WhenFailed(func(err error) { // request failed
 		panic(err)
-	}).Get() // 请求完成，清理资源
+	}).Get() // request completed, clear resources
 
 	fmt.Println(ret)
 	// Output:

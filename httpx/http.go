@@ -54,7 +54,7 @@ func (r *R) ok() bool {
 }
 
 func (r *R) wrapErr(err error) {
-	var e = err
+	e := err
 	if r.err != nil {
 		e = errorx.Wrapf(err, r.err.Error())
 	}
@@ -74,6 +74,15 @@ func (r *R) readAll() *R {
 		}
 	}
 	return r
+}
+
+func (r *R) Clone() *R {
+	bodyCopy := make([]byte, len(r.readAll().body))
+	copy(bodyCopy, r.readAll().body)
+	nr := RespErr(r.Response, r.err)
+	nr.body = bodyCopy
+	nr.read = true // body has been copied, so set read to true
+	return nr
 }
 
 func (r *R) Err() error {
