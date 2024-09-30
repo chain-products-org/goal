@@ -1,16 +1,20 @@
 package solana
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"strconv"
-	"strings"
 	"testing"
 
-	"github.com/gophero/goal/httpx"
-
 	"github.com/gagliardetto/solana-go/rpc"
+)
+
+var (
+	puk           = "GLfZ1AbfccfsKpLiwPxG83KKWfnPzDvpTkoZ3XZmwMBA"
+	prk           = "jUG6je2Be7qGoQkecqYywQT5pjjhQ7M4FtXbLB5BsHkFyskEgM6Ryv4WAS7bxBv6Wjd4wyg5kZniDrtx9Eb6GEx"
+	to            = "9Fjk6CFddDfuc1hVeWUc19LnnrbgX3yVF9wC5fkrJpB9"
+	helius_apiKey = "21af6b88-9dae-45b5-88db-39dc20a0a6db"
+	mobula_apikey = "8f42eea7-8167-4d12-9cf3-e4fb18de2d6e"
 )
 
 func TestCreateWallet(t *testing.T) {
@@ -24,51 +28,51 @@ func TestImportFromPrivateKey(t *testing.T) {
 }
 
 func TestSOLWallet_GetAirdrop(t *testing.T) {
-	sWallet := &SOLWallet{PublicKey: "DqWiEQscZgoxDdJjAoVkZLRKL8EZSL9f2gk1cHwXcPBP", PrivateKey: "xxxx"}
+	sWallet := &SOLWallet{PublicKey: puk, PrivateKey: prk}
 
 	// sWallet.GetAirdrop(rpc.DevNet_RPC)
 	sWallet.GetAirdrop(rpc.DevNet_RPC)
 }
 
 func TestSOLWallet_TransferToWaitConfirm(t *testing.T) {
-	sWallet := &SOLWallet{PublicKey: "CVVQeRGEi1bR4a7CVqNxBPCxScVMYPR86SiNPkeFfLFs", PrivateKey: "xxxx"}
-
-	sWallet.TransferToWaitConfirm("DqWiEQscZgoxDdJjAoVkZLRKL8EZSL9f2gk1cHwXcPBP", uint64(32231112), rpc.DevNet_RPC, rpc.DevNet_WS)
+	sWallet := &SOLWallet{PublicKey: puk, PrivateKey: prk}
+	ret, err := sWallet.TransferToWaitConfirm(to, uint64(32231112), rpc.DevNet_RPC, rpc.DevNet_WS)
+	if err != nil {
+		fmt.Println(err)
+		t.Fail()
+	}
+	fmt.Println(ret)
 }
 
 func TestSOLWallet_TransferToWithoutConfirm(t *testing.T) {
-	sWallet := &SOLWallet{PublicKey: "CVVQeRGEi1bR4a7CVqNxBPCxScVMYPR86SiNPkeFfLFs", PrivateKey: "xxxxx"}
-	hex, err := sWallet.TransferToWithoutConfirm("DqWiEQscZgoxDdJjAoVkZLRKL8EZSL9f2gk1cHwXcPBP", uint64(3324147), rpc.MainNetBeta_RPC)
+	sWallet := &SOLWallet{PublicKey: puk, PrivateKey: prk}
+	hex, err := sWallet.TransferToWithoutConfirm(to, uint64(3324147), rpc.DevNet_RPC)
 	if err != nil {
-		panic(err)
+		t.Errorf("failed: %v", err)
+		t.Fail()
 	}
 	fmt.Println(hex)
 }
 
 func TestGetBalance(t *testing.T) {
-	bal := GetBalance("DqWiEQscZgoxDdJjAoVkZLRKL8EZSL9f2gk1cHwXcPBP", rpc.MainNetBeta_RPC)
-	// bal := GetBalance("DqWiEQscZgoxDdJjAoVkZLRKL8EZSL9f2gk1cHwXcPBP", rpc.DevNet_RPC)
+	bal := GetBalance(puk, rpc.DevNet_RPC)
 	fmt.Println("◎", bal.Text('f', 10))
-	//	0.0051575720
-	//  0.00515757
 }
 
 func TestGetSolPrice(t *testing.T) {
-	price := GetSolPriceMobula("your api key")
+	price := GetSolPriceMobula(mobula_apikey)
 	fmt.Println(fmt.Sprintf("%f", price))
 }
 
 func TestGetTransaction(t *testing.T) {
-	// prd confirm
-	tx := "2uMqKF3MjiQkYy8rnvTyS3aGw3VHefJZJpnUzqWGZchENaoi31dV9uyihWuqmW7p9s8YgacCMjiiSQF2uhwDtu2C"
-	state, from, to, amount, err := GetTransactionInfo(tx, "https://mainnet.helius-rpc.com/?api-key=621a800a-5716-4e3e-96ea-c9f954c99ba3")
+	tx := "4YBb8sCBNZXPsfabt1dR7e78NFSyE7zZanfPU144Zx173cT6r2WhjohAsxNtwWt8Fd5U79LfGWj36cQDDsuY7yhr"
+	state, from, to, amount, err := GetTransactionInfo(tx, "https://mainnet.helius-rpc.com/?api-key="+helius_apiKey)
 	fmt.Println(state, from, to, amount, err)
 }
 
 func TestTransferSPLToken(t *testing.T) {
-	sWallet := &SOLWallet{PublicKey: "DqWiEQscZgoxDdJjAoVkZLRKL8EZSL9f2gk1cHwXcPBP", PrivateKey: "xxxxx"}
-	to := "CVVQeRGEi1bR4a7CVqNxBPCxScVMYPR86SiNPkeFfLFs"
-	sWallet.TransferSPLToken("CVVQeRGEi1bR4a7CVqNxBPCxScVMYPR86SiNPkeFfLFs", to, 10, rpc.DevNet_RPC)
+	sWallet := &SOLWallet{PublicKey: puk, PrivateKey: prk}
+	sWallet.TransferSPLToken(puk, to, 10, rpc.DevNet_RPC)
 }
 
 func TestTemp(t *testing.T) {
@@ -84,26 +88,8 @@ func Hex2Dec(val string) int {
 	return int(n)
 }
 
-func TestCallNode(t *testing.T) {
-	params := fmt.Sprintf(`{"txId":%d, "collection":"%s", "tokenId":"%s", "type":%d, "rpcUrl":"%s", "to":"%s" }`, 12, "CVVQeRGEi1bR4a7CVqNxBPCxScVMYPR86SiNPkeFfLFs", "0002", 2, rpc.MainNetBeta_RPC, "DqWiEQscZgoxDdJjAoVkZLRKL8EZSL9f2gk1cHwXcPBP")
-	// TODO 通知node mint nft
-	mintHashByte := httpx.PostJson("http://10.10.10.106:3000"+"/inner/mint_to", strings.NewReader(params), func(err error) {
-		// err = srv.MintReport(nft, "", model.NFTMintFail)
-		fmt.Println("mint nft failed")
-	}, nil)
-
-	mp := make(map[string]interface{})
-	err1 := json.Unmarshal([]byte(mintHashByte), &mp)
-	if err1 != nil {
-		fmt.Println("node mint respose err", mintHashByte)
-	}
-	mintHash := mp["hash"].(string)
-
-	fmt.Println("mintHash", mintHash)
-}
-
 func TestGetTransactionList(t *testing.T) {
-	GetTransactionList("DqWiEQscZgoxDdJjAoVkZLRKL8EZSL9f2gk1cHwXcPBP", rpc.MainNetBeta_RPC)
+	GetTransactionList(puk, rpc.DevNet_RPC)
 }
 
 func TestURLDecode(t *testing.T) {

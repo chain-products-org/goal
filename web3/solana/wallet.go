@@ -112,7 +112,7 @@ func (w *SOLWallet) TransferToWithoutConfirm(to string, amount uint64, rpcUrl st
 
 func signTransaction(to string, amount uint64, rpcClient *rpc.Client, accountFrom solana.PrivateKey) *solana.Transaction {
 	// Get the recent blockhash:
-	recent, err := rpcClient.GetRecentBlockhash(context.TODO(), rpc.CommitmentFinalized)
+	recent, err := rpcClient.GetLatestBlockhash(context.TODO(), rpc.CommitmentFinalized)
 	if err != nil {
 		panic(err)
 	}
@@ -237,15 +237,8 @@ func GetSolPriceMobula(key string) float64 {
 	const SOL = "Solana"
 	var rerr error
 	sol := make(map[string]interface{})
-	_ = httpx.GetJson(
-		fmt.Sprintf(CoinPriceUrl, SOL),
-		func(err error) {
-			rerr = err
-		},
-		sol,
-		map[string]string{"Content-Type": "application/json", "Authorization": key},
-	)
-	if rerr != nil {
+	_, err := httpx.GetJson(fmt.Sprintf(CoinPriceUrl, SOL), &sol, map[string]string{"Content-Type": "application/json", "Authorization": key})
+	if err != nil {
 		log.Printf("request failed: %v", rerr)
 		return 0
 	}
@@ -359,15 +352,8 @@ func GetSolPriceFromMoralis(key string) float64 {
 	const WETH = "0xD31a59c85aE9D8edEFeC411D448f90841571b89c"
 	ret := &MoralisPriceResponse{}
 	var rerr error
-	_ = httpx.GetJson(
-		fmt.Sprintf(CoinPriceUrl, WETH),
-		func(err error) {
-			rerr = err
-		},
-		ret,
-		map[string]string{"accept": "application/json", "X-API-Key": key},
-	)
-	if rerr != nil {
+	_, err := httpx.GetJson(fmt.Sprintf(CoinPriceUrl, WETH), ret, map[string]string{"accept": "application/json", "X-API-Key": key})
+	if err != nil {
 		log.Printf("request failed: %v", rerr)
 		return 0
 	}
