@@ -3,10 +3,11 @@ package redisx
 import (
 	"context"
 	"fmt"
-	"github.com/gophero/goal/queue"
-	"github.com/redis/go-redis/v9"
 	"sync"
 	"time"
+
+	"github.com/gophero/goal/queue"
+	"github.com/redis/go-redis/v9"
 )
 
 const (
@@ -66,12 +67,13 @@ func (q *queueImpl) Len() uint64 {
 // ==============================
 
 func NewUniqueQueue(rc Client, key string) queue.Queue {
-	// 使用hash标签模式将key的hash slot映射到集群的同一个节点，避免 CROSSSLOT 错误，见：
-	// https://hackernoon.com/resolving-the-crossslot-keys-error-with-redis-cluster-mode-enabled
-	// https://redis.io/docs/reference/cluster-spec/
-	// 因为queue和set会用到事务，事务操作的key可能在集群环境下被映射到不同的hash slot，从而出错：
-	// CROSSSLOT Keys in request don't hash to the same slot
-	// 给key加上标签"{}"后，只有"{}"中的部分会用来计算hash，此时queue和set的key就被hash到同一个slot下
+	// To avoid the "CROSSSLOT Keys" error in a Redis Cluster setup, we can use the
+	// hash tag feature to map keys to the same slot on the cluster node. This is
+	// important because certain operations, like transactions involving keys from
+	// different slots, can trigger the error. By adding braces "{}" around the key
+	// , only the content within the braces is used for hash calculation. This ensures
+	// that keys related to operations like queues and sets are mapped to the same
+	// slot, preventing errors. See: https://redis.io/docs/reference/cluster-spec/
 	key = "{" + key + "}"
 	setkey := key + "_set"
 	return &uniqueQueue{
@@ -84,7 +86,7 @@ func NewUniqueQueue(rc Client, key string) queue.Queue {
 func createSetWhenExists(rc Client, key string) (string, Set) {
 	var setExists bool
 	var setkey string
-	var setkeyPrefix = key + "_"
+	setkeyPrefix := key + "_"
 	if cmd := rc.Keys(context.Background(), setkeyPrefix+"*"); cmd.Err() != nil {
 		panic(cmd.Err())
 	} else {
@@ -107,7 +109,7 @@ type uniqueQueue struct {
 }
 
 func (uq *uniqueQueue) retryPush(vs ...any) error {
-	var ctx = context.TODO()
+	ctx := context.TODO()
 	go func() {
 		defer func() {
 			if err := recover(); err != nil {
@@ -148,8 +150,8 @@ func (uq *uniqueQueue) Push(vs ...any) error {
 		return nil
 	}
 
-	// 使用Pipliner开启事务保证一致性
-	var ctx = context.TODO()
+	// use Pipliner to start transaction
+	ctx := context.TODO()
 	_, err := uq.queueImpl.rc.TxPipelined(ctx, func(pip redis.Pipeliner) error {
 		cmd := pip.LPush(ctx, uq.key, dest...)
 		if cmd.Err() != nil {
@@ -164,11 +166,11 @@ func (uq *uniqueQueue) Pop() (string, error) {
 	if s, err := uq.queueImpl.Pop(); err != nil {
 		return "", err
 	} else {
-		// 出错重新放入队列
+		// if an error occured, retry to push s into the queue
 		if err := uq.set.Rem(s); err != nil {
 			fmt.Printf("rem [%v] from set error, will retry %d times to push to queue: %v\n", s, maxRetry, err)
 			return s, uq.retryPush(s)
-			//return s, err
+			// return s, err
 		}
 		return s, nil
 	}
@@ -199,12 +201,12 @@ func (uq *uniqueQueue) PopN(n int) ([]string, error) {
 		if len(vs) == 0 {
 			return []string{}, nil
 		}
-		var ss = make([]any, len(vs))
+		ss := make([]any, len(vs))
 		for i, v := range vs {
 			ss[i] = v
 		}
 		if err := uq.set.Rem(ss...); err != nil {
-			//fmt.Printf("rem [%v] from set error, will retry %d times to push to queue: %v\n", ss, maxRetry, err)
+			// fmt.Printf("rem [%v] from set error, will retry %d times to push to queue: %v\n", ss, maxRetry, err)
 			return vs, uq.retryPush(ss...)
 		}
 		return vs, nil
@@ -212,14 +214,14 @@ func (uq *uniqueQueue) PopN(n int) ([]string, error) {
 }
 
 func (uq *uniqueQueue) BPop() (string, error) {
-	if s, err := uq.queueImpl.BPop(); err != nil { // 阻塞
+	if s, err := uq.queueImpl.BPop(); err != nil { // BPop will block if the queue is empty until popped a string
 		return "", err
 	} else {
-		// 删除set中的元素失败，重新放入队列
+		// Failed to remove an element from the set, reinsert it into the queue
 		if err := uq.set.Rem(s); err != nil {
 			fmt.Printf("rem [%s] from set error, will retry %d times to push to queue: %v\n", s, maxRetry, err)
 			return s, uq.retryPush(s)
-			//return s, err
+			// return s, err
 		}
 		return s, err
 	}

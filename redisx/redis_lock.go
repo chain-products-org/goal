@@ -3,19 +3,20 @@ package redisx
 import (
 	"context"
 	"fmt"
-	"github.com/gophero/goal/stringx"
-	"github.com/redis/go-redis/v9"
 	"strconv"
 	"sync/atomic"
+
+	"github.com/gophero/goal/stringx"
+	"github.com/redis/go-redis/v9"
 )
 
 const (
-	randomLen = 16  // 随机id长度
-	tolerance = 500 // 冗余时间（ms）
+	randomLen = 16  // id length
+	tolerance = 500 // tolerance time in millsecond（ms）
 )
 
 var (
-	// 可重入LUA加锁脚本，重入后更新过期时间
+	// Reentrant LUA locking script that updates expiration time after reentry
 	lockScript = redis.NewScript(`if redis.call("GET", KEYS[1]) == ARGV[1] then
     redis.call("SET", KEYS[1], ARGV[1], "PX", ARGV[2])
     return "OK"
@@ -23,7 +24,7 @@ else
     return redis.call("SET", KEYS[1], ARGV[1], "NX", "PX", ARGV[2])
 end`)
 
-	// 释放锁脚本
+	// Release lock script
 	delScript = redis.NewScript(`if redis.call("GET", KEYS[1]) == ARGV[1] then
     return redis.call("DEL", KEYS[1])
 else
