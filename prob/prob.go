@@ -1,8 +1,8 @@
 package prob
 
 type Prob struct {
-	Val    int    // 概率
-	DisVal string // 显示值
+	Val    int    // prob value
+	DisVal string // prob display value
 }
 
 func NewProb(v int, dis string) Prob {

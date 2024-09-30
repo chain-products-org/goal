@@ -2,9 +2,10 @@ package prob_test
 
 import (
 	"fmt"
-	"github.com/gophero/goal/prob"
 	"math"
 	"testing"
+
+	"github.com/gophero/goal/prob"
 )
 
 func TestPercentProb0(t *testing.T) {
@@ -25,8 +26,8 @@ func TestPercentProb100(t *testing.T) {
 
 func TestPercentProb(t *testing.T) {
 	var x, y int
-	var cnt = 100000 // 执行次数
-	var want = 30    // 30%的概率
+	cnt := 100000 // total execute count
+	want := 30    // prob: 30%
 	for i := 0; i < cnt; i++ {
 		if prob.Percent(want) {
 			x++
@@ -35,16 +36,16 @@ func TestPercentProb(t *testing.T) {
 		}
 	}
 	// 误差
-	var p = 0.2
-	var wantProb = float64(want) / 100
-	var actProb = float64(x) / float64(cnt)
+	p := 0.2
+	wantProb := float64(want) / 100
+	actProb := float64(x) / float64(cnt)
 	fmt.Printf("final hit prob: %.2f\n", actProb)
 	fmt.Printf("final not hit prob: %.2f\n", float64(y)/float64(cnt))
 	assertResult(wantProb, actProb, p, t)
 }
 
 func TestHalfProb(t *testing.T) {
-	var x, y, cnt = 0, 0, 100000
+	x, y, cnt := 0, 0, 100000
 	for i := 0; i < cnt; i++ {
 		if prob.Half() {
 			x++
@@ -53,9 +54,9 @@ func TestHalfProb(t *testing.T) {
 		}
 	}
 
-	var p = 0.2
-	var wantProb = 0.5
-	var actProb = float64(x) / float64(cnt)
+	p := 0.2
+	wantProb := 0.5
+	actProb := float64(x) / float64(cnt)
 	fmt.Printf("final hit prob: %.2f\n", actProb)
 	fmt.Printf("final not hit prob: %.2f\n", float64(y)/float64(cnt))
 	assertResult(wantProb, actProb, p, t)
@@ -95,7 +96,7 @@ func ExampleSelect() {
 }
 
 func createSelectProbCase(data []int, t *testing.T) {
-	var length = len(data)
+	length := len(data)
 	ret := make([]int, length)
 	cnt := 1000000
 	var num int
@@ -107,13 +108,13 @@ func createSelectProbCase(data []int, t *testing.T) {
 		ret[idx]++
 	}
 
-	var p = 0.1
-	var wantProbs = make([]float64, length)
-	var actProbs = make([]float64, length)
-	for idx, _ := range data {
+	p := 0.1
+	wantProbs := make([]float64, length)
+	actProbs := make([]float64, length)
+	for idx := range data {
 		wantProbs[idx] = float64(data[idx]) / float64(num)
 	}
-	for idx, _ := range ret {
+	for idx := range ret {
 		actProbs[idx] = float64(ret[idx]) / float64(cnt)
 		fmt.Printf("final hit prob: %.2f, v: %v\n", actProbs[idx], data[idx])
 		assertResult(wantProbs[idx], actProbs[idx], p, t)
