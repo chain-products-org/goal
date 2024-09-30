@@ -6,14 +6,28 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gophero/goal/twitter"
 )
 
+var temp *template.Template
+
+func init() {
+	// it's relative to the project's root director
+	tmpl, err := template.New("demo.html").ParseFiles("twitter/demo/demo.html")
+	if err != nil {
+		panic(err)
+	}
+	temp = tmpl
+}
+
 func main() {
-	clientId, clientSecret, redirectUrl := "", "", ""
+	clientId, clientSecret, redirectUrl := "bW55cThSSFlGR3ktMWxxWUIxMzY6MTpjaQ", "", "http://localhost:8080/demo"
+	clientSecret = os.Getenv("gophero_x_secret") // read client recret from env
 	mux := http.DefaultServeMux
 	mux.HandleFunc("/demo", func(w http.ResponseWriter, req *http.Request) {
+		req.ParseForm()
 		err := req.Form.Get("error")   // if there is an error
 		state := req.Form.Get("state") // state is using to prevent csrf attacks：https://auth0.com/docs/protocols/state-parameters
 		code := req.Form.Get("code")   // auth code
@@ -29,29 +43,28 @@ func main() {
 			fmt.Println(userInfo)
 
 			data := map[string]any{
-				"title":   "test html",
-				"authUrl": "",
-				"err":     err,
-				"at":      at.AccessToken,
-				"rt":      at.RefreshToken,
-				"user":    userInfo,
+				"title":        "test html",
+				"authUrl":      "",
+				"redirect_uri": redirectUrl,
+				"err":          err,
+				"at":           at.AccessToken,
+				"rt":           at.RefreshToken,
+				"user":         userInfo,
 			}
-			temp := template.New("demo.html")
 			w.Header().Add("Content-Type", "text/html; charset=utf-8")
 			w.WriteHeader(http.StatusOK)
 			temp.Execute(w, data)
 		} else {
 			data := map[string]any{
-				"title":   "test html",
-				"authUrl": twitter.OAuth2Apis.Auth.AuthorizeUrl(clientId, redirectUrl, twitter.TweetRead, twitter.TweetWrite, twitter.OfflineAccess, twitter.UsersRead, twitter.FollowsRead, twitter.FollowsWrite),
-				"err":     err,
+				"title":        "test html",
+				"authUrl":      twitter.OAuth2Apis.Auth.AuthorizeUrl(clientId, redirectUrl, twitter.TweetRead, twitter.TweetWrite, twitter.OfflineAccess, twitter.UsersRead, twitter.FollowsRead, twitter.FollowsWrite),
+				"err":          err,
+				"redirect_uri": redirectUrl,
 			}
-			temp := template.New("demo.html")
 			w.Header().Add("Content-Type", "text/html; charset=utf-8")
 			w.WriteHeader(http.StatusOK)
 			temp.Execute(w, data)
 		}
-		http.ServeFile(w, req, "demo.html")
 	})
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }

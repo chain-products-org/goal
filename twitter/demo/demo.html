@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>login</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
 </head>
 
 <body>
@@ -33,7 +34,7 @@
 
 <script type="application/javascript">
     var YOUR_CLIENT_ID = '{{.clientId}}'
-    var YOUR_REDIRECT_URI = 'http://localhost:8080/demo/auth'
+    var YOUR_REDIRECT_URI = '{{.redirect_uri}}'
     var SCOPE = 'https://www.googleapis.com/auth/userinfo.profile'
     // var SCOPE = 'https://www.googleapis.com/auth/userinfo.email'
     var fragmentString = location.hash.substring(1)
