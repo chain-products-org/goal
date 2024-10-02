@@ -69,3 +69,22 @@ func (l *Logger) Require(cond bool, desc string, args ...any) {
 		l.Fail(desc, args...)
 	}
 }
+
+func (l *Logger) Fatal(cond bool, desc string, args ...any) {
+	if cond {
+		l.Pass(desc, args...)
+	} else {
+		l.Fail(desc, args...)
+		l.T.FailNow()
+	}
+}
+
+func (l *Logger) NoErr(err error, desc string, args ...any) {
+	if err == nil {
+		l.Pass(desc, args...)
+	} else {
+		l.Fail(desc, args...)
+		l.Logf("requires no error, but found: %v", err)
+		l.T.FailNow()
+	}
+}
