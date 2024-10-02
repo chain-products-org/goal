@@ -30,31 +30,31 @@ func CreateWallet() *SOLWallet {
 	return &SOLWallet{PrivateKey: account.PrivateKey.String(), PublicKey: account.PublicKey().String()}
 }
 
-func ImportFromPrivateKey(filePath string) *SOLWallet {
+func ImportFromPrivateKey(filePath string) (*SOLWallet, error) {
 	privKey, err := solana.PrivateKeyFromSolanaKeygenFile(filePath)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	account, err := solana.WalletFromPrivateKeyBase58(privKey.String())
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return &SOLWallet{PrivateKey: account.PrivateKey.String(), PublicKey: account.PublicKey().String()}
+	return &SOLWallet{PrivateKey: account.PrivateKey.String(), PublicKey: account.PublicKey().String()}, nil
 }
 
-func (w *SOLWallet) GetAirdrop(rpcUrl string) {
+func (w *SOLWallet) GetAirdrop(sol float64, rpcUrl string) (string, error) {
 	client := rpc.New(rpcUrl)
 	// Airdrop 1 SOL to the new account:
 	out, err := client.RequestAirdrop(
 		context.TODO(),
 		solana.MustPublicKeyFromBase58(w.PublicKey),
-		solana.LAMPORTS_PER_SOL*5/10,
+		uint64(float64(solana.LAMPORTS_PER_SOL)*sol),
 		rpc.CommitmentFinalized,
 	)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	fmt.Println("airdrop transaction signature:", out)
+	return out.String(), nil
 }
 
 // TransferToWaitConfirm transfer SOL to another account and wait for confirmation

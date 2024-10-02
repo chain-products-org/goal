@@ -6,7 +6,9 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
+	"github.com/gophero/goal/testx"
 )
 
 var (
@@ -18,25 +20,42 @@ var (
 )
 
 func TestCreateWallet(t *testing.T) {
+	tl := testx.Wrap(t)
+	tl.Case("create wallet")
 	wallet := CreateWallet()
-	fmt.Println(wallet)
+	tl.Log(wallet)
+	tl.Require(wallet != nil, "wallet should not be nil")
+	tl.Require(wallet.PublicKey != "", "wallet public key should not be empty")
+	tl.Require(wallet.PrivateKey != "", "wallet private key should not be empty")
 }
 
 func TestImportFromPrivateKey(t *testing.T) {
-	wallet := ImportFromPrivateKey("/Home/ubuntu/.config/solana/id.json")
-	fmt.Println(wallet)
+	tl := testx.Wrap(t)
+	tl.Case("import from private key")
+	wallet, err := ImportFromPrivateKey("/Home/ubuntu/.config/solana/id.json")
+	tl.Log(wallet)
+	tl.NoErr(err, "import should no error")
+	tl.Require(wallet != nil, "wallet should not be nil")
+	tl.Require(wallet.PublicKey != "", "wallet public key should not be empty")
+	tl.Require(wallet.PrivateKey != "", "wallet private key should not be empty")
 }
 
 func TestSOLWallet_GetAirdrop(t *testing.T) {
-	sWallet := &SOLWallet{PublicKey: puk, PrivateKey: prk}
-
-	// sWallet.GetAirdrop(rpc.DevNet_RPC)
-	sWallet.GetAirdrop(rpc.DevNet_RPC)
+	tl := testx.Wrap(t)
+	tl.Case("GetAirdrop")
+	sWallet := &SOLWallet{PublicKey: "9Fjk6CFddDfuc1hVeWUc19LnnrbgX3yVF9wC5fkrJpB9", PrivateKey: ""}
+	hash, err := sWallet.GetAirdrop(2, rpc.DevNet_RPC)
+	tl.Log(hash)
+	tl.NoErr(err, "should no error")
+	tl.Require(hash != "", "should return hash")
 }
 
 func TestSOLWallet_TransferToWaitConfirm(t *testing.T) {
 	sWallet := &SOLWallet{PublicKey: puk, PrivateKey: prk}
-	ret, err := sWallet.TransferToWaitConfirm(to, uint64(32231112), rpc.DevNet_RPC, rpc.DevNet_WS)
+	balance, acc := GetBalance(sWallet.PublicKey, rpc.DevNet_RPC).Float64()
+	fmt.Println(acc)
+	fmt.Println(balance)
+	ret, err := sWallet.TransferToWaitConfirm(to, uint64(balance*float64(solana.LAMPORTS_PER_SOL))-5000, rpc.DevNet_RPC, rpc.DevNet_WS)
 	if err != nil {
 		fmt.Println(err)
 		t.Fail()
