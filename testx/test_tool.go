@@ -79,7 +79,11 @@ func (l *Logger) Fatal(cond bool, desc string, args ...any) {
 	}
 }
 
-func (l *Logger) NoErr(err error, desc string, args ...any) {
+func (l *Logger) NoErr(err error) {
+	l.NoErrf(err, "should be no error")
+}
+
+func (l *Logger) NoErrf(err error, desc string, args ...any) {
 	if err == nil {
 		l.Pass(desc, args...)
 	} else {
