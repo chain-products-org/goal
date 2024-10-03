@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"math/big"
 	"os"
 
@@ -62,14 +61,17 @@ func (w *SOLWallet) GetAirdrop(sol float64, rpcUrl string) (string, error) {
 func (w *SOLWallet) TransferToWaitConfirm(to string, amount uint64, rpcUrl, wsUrl string) (string, error) {
 	accountFrom, err := solana.PrivateKeyFromBase58(w.PrivateKey)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	rpcClient := rpc.New(rpcUrl)
-	tx := signTransaction(to, amount, rpcClient, accountFrom)
+	tx, err := signTransaction(to, amount, rpcClient, accountFrom)
+	if err != nil {
+		return "", nil
+	}
 	// Pretty print the transaction:
 	wsClient, err := ws.Connect(context.Background(), wsUrl)
 	if err != nil {
-		panic(err)
+		return "", nil
 	}
 	tx.EncodeTree(text.NewTreeEncoder(os.Stdout, "Transfer SOL"))
 	// Send transaction, and wait for confirmation:
@@ -80,7 +82,7 @@ func (w *SOLWallet) TransferToWaitConfirm(to string, amount uint64, rpcUrl, wsUr
 		tx,
 	)
 	if err != nil {
-		panic(err)
+		return "", nil
 	}
 	spew.Dump(sig)
 	return sig.String(), nil
@@ -89,10 +91,13 @@ func (w *SOLWallet) TransferToWaitConfirm(to string, amount uint64, rpcUrl, wsUr
 func (w *SOLWallet) TransferToWithoutConfirm(to string, amount uint64, rpcUrl string) (string, error) {
 	accountFrom, err := solana.PrivateKeyFromBase58(w.PrivateKey)
 	if err != nil {
-		panic(err)
+		return "", nil
 	}
 	rpcClient := rpc.New(rpcUrl)
-	tx := signTransaction(to, amount, rpcClient, accountFrom)
+	tx, err := signTransaction(to, amount, rpcClient, accountFrom)
+	if err != nil {
+		return "", nil
+	}
 	// Or just send the transaction WITHOUT waiting for confirmation:
 	opts := rpc.TransactionOpts{
 		SkipPreflight:       false,
@@ -110,11 +115,11 @@ func (w *SOLWallet) TransferToWithoutConfirm(to string, amount uint64, rpcUrl st
 	return sig.String(), nil
 }
 
-func signTransaction(to string, amount uint64, rpcClient *rpc.Client, accountFrom solana.PrivateKey) *solana.Transaction {
+func signTransaction(to string, amount uint64, rpcClient *rpc.Client, accountFrom solana.PrivateKey) (*solana.Transaction, error) {
 	// Get the recent blockhash:
 	recent, err := rpcClient.GetLatestBlockhash(context.TODO(), rpc.CommitmentFinalized)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	// Create the transaction:
 	tx, err := solana.NewTransaction(
@@ -129,7 +134,7 @@ func signTransaction(to string, amount uint64, rpcClient *rpc.Client, accountFro
 		solana.TransactionPayer(accountFrom.PublicKey()),
 	)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	_, err = tx.Sign(
 		func(key solana.PublicKey) *solana.PrivateKey {
@@ -139,12 +144,15 @@ func signTransaction(to string, amount uint64, rpcClient *rpc.Client, accountFro
 			return nil
 		},
 	)
-	return tx
+	return tx, nil
 }
 
-func (w *SOLWallet) TransferSPLToken(tokenSource string, to string, amount uint64, rpcUrl string) {
+func (w *SOLWallet) TransferSPLToken(tokenSource string, to string, amount uint64, rpcUrl string) (string, error) {
 	rpcClient := rpc.New(rpcUrl)
-	tx := w.createSPLToken(tokenSource, to, amount, rpcClient)
+	tx, err := w.createSPLToken(tokenSource, to, amount, rpcClient)
+	if err != nil {
+		return "", err
+	}
 	// Pretty print the transaction:
 	tx.EncodeTree(text.NewTreeEncoder(os.Stdout, "Transfer SPL Token"))
 	// Send transaction, and wait for confirmation:
@@ -155,26 +163,26 @@ func (w *SOLWallet) TransferSPLToken(tokenSource string, to string, amount uint6
 		tx,
 	)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	spew.Dump(sig)
+	return sig.String(), nil
 }
 
-func (w *SOLWallet) createSPLToken(tokenSource string, to string, amount uint64, rpcClient *rpc.Client) *solana.Transaction {
+func (w *SOLWallet) createSPLToken(tokenSource string, to string, amount uint64, rpcClient *rpc.Client) (*solana.Transaction, error) {
 	accountFrom, err := solana.PrivateKeyFromBase58(w.PrivateKey)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	// Get the recent blockhash:
-	recent, err := rpcClient.GetRecentBlockhash(context.TODO(), rpc.CommitmentFinalized)
+	recent, err := rpcClient.GetLatestBlockhash(context.TODO(), rpc.CommitmentFinalized)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	params := new(token.Transfer)
 	source := &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58(tokenSource), IsSigner: false, IsWritable: true}
 	toAct := &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58(to), IsSigner: false, IsWritable: true}
 	signer := &solana.AccountMeta{PublicKey: accountFrom.PublicKey(), IsSigner: true, IsWritable: false}
-	//
 	params.SetAccounts([]*solana.AccountMeta{source, toAct, signer})
 	params.SetAmount(amount)
 	// param := params.SetSourceAccount(solana.MustPublicKeyFromBase58(tokenSource)).SetDestinationAccount(solana.MustPublicKeyFromBase58(to)).SetOwnerAccount(accountFrom.PublicKey()).SetAmount(amount)
@@ -189,7 +197,7 @@ func (w *SOLWallet) createSPLToken(tokenSource string, to string, amount uint64,
 		solana.TransactionPayer(accountFrom.PublicKey()),
 	)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	_, err = tx.Sign(
 		func(key solana.PublicKey) *solana.PrivateKey {
@@ -199,10 +207,10 @@ func (w *SOLWallet) createSPLToken(tokenSource string, to string, amount uint64,
 			return nil
 		},
 	)
-	return tx
+	return tx, nil
 }
 
-func GetBalance(addr string, rpcUrl string) *big.Float {
+func GetBalance(addr string, rpcUrl string) (*big.Float, error) {
 	client := rpc.New(rpcUrl)
 	pubKey := solana.MustPublicKeyFromBase58(addr)
 	out, err := client.GetBalance(
@@ -211,42 +219,37 @@ func GetBalance(addr string, rpcUrl string) *big.Float {
 		rpc.CommitmentFinalized,
 	)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	// Convert lamports to sol:
-	spew.Dump(out.Value) // total lamports on the account; 1 sol = 1000000000 lamports
+	spew.Dump(out.Value)
 	lamportsOnAccount := new(big.Float).SetUint64(out.Value)
 	solBalance := new(big.Float).Quo(lamportsOnAccount, new(big.Float).SetUint64(solana.LAMPORTS_PER_SOL))
-	// WARNING: this is not a precise conversion.
-	// fmt.Println("◎", solBalance.Text('f', 10))
-	return solBalance
+	return solBalance, nil
 }
 
-func FromLamports(value uint64) *big.Float {
-	lamportsOnAccount := new(big.Float).SetUint64(value)
-	return new(big.Float).Quo(lamportsOnAccount, new(big.Float).SetUint64(solana.LAMPORTS_PER_SOL))
+func FromLamports(v uint64) *big.Float {
+	lamports := new(big.Float).SetUint64(v)
+	return new(big.Float).Quo(lamports, new(big.Float).SetUint64(solana.LAMPORTS_PER_SOL))
 }
 
-func ToLamports(value *big.Float) uint64 {
-	result, _ := new(big.Float).Mul(value, new(big.Float).SetUint64(solana.LAMPORTS_PER_SOL)).Uint64()
+func ToLamports(v *big.Float) uint64 {
+	result, _ := new(big.Float).Mul(v, new(big.Float).SetUint64(solana.LAMPORTS_PER_SOL)).Uint64()
 	return result
 }
 
-func GetSolPriceMobula(key string) float64 {
+func GetSolPriceMobula(key string) (float64, error) {
 	const CoinPriceUrl = "https://api.mobula.io/api/1/market/data?asset=%s"
 	const SOL = "Solana"
-	var rerr error
 	sol := make(map[string]interface{})
 	_, err := httpx.GetJson(fmt.Sprintf(CoinPriceUrl, SOL), &sol, map[string]string{"Content-Type": "application/json", "Authorization": key})
 	if err != nil {
-		log.Printf("request failed: %v", rerr)
-		return 0
+		return 0, err
 	}
 	sol_price := (sol["data"]).(map[string]interface{})["price"]
 	if sol_price.(float64) > 0 {
-		return sol_price.(float64)
+		return sol_price.(float64), nil
 	}
-	return 0
+	return 0, nil
 }
 
 const (
@@ -326,41 +329,40 @@ func GetTransactionSate(sig string, rpcUrl string) (bool, error) {
 	return false, nil
 }
 
-func GetTransactionList(addr string, rpcUrl string) {
+func GetTransactionList(addr string, rpcUrl string) (rpc.GetConfirmedSignaturesForAddress2Result, error) {
 	client := rpc.New(rpcUrl)
 	pubKey := solana.MustPublicKeyFromBase58(addr)
-	lim := uint64(10)
-	out, err := client.GetConfirmedSignaturesForAddress2(
+	lim := 10
+	out, err := client.GetSignaturesForAddressWithOpts(
 		context.TODO(),
 		pubKey,
-		&rpc.GetConfirmedSignaturesForAddress2Opts{
-			Limit: &lim,
+		&rpc.GetSignaturesForAddressOpts{
+			Commitment: rpc.CommitmentConfirmed, // query confirmed
+			Limit:      &lim,
 		},
 	)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	fmt.Println(out)
+	return out, nil
 }
 
 type MoralisPriceResponse struct {
 	UsdPrice float64 `json:"usdPrice"`
 }
 
-func GetSolPriceFromMoralis(key string) float64 {
+func GetSolPriceFromMoralis(key string) (float64, error) {
 	const CoinPriceUrl = "https://deep-index.moralis.io/api/v2/erc20/%s/price?chain=eth"
 	const WETH = "0xD31a59c85aE9D8edEFeC411D448f90841571b89c"
 	ret := &MoralisPriceResponse{}
-	var rerr error
 	_, err := httpx.GetJson(fmt.Sprintf(CoinPriceUrl, WETH), ret, map[string]string{"accept": "application/json", "X-API-Key": key})
 	if err != nil {
-		log.Printf("request failed: %v", rerr)
-		return 0
+		return 0, err
 	}
 	if ret.UsdPrice > 0 {
-		return ret.UsdPrice
+		return ret.UsdPrice, nil
 	}
-	return 0
+	return 0, nil
 }
 
 type TransactionModel struct {
