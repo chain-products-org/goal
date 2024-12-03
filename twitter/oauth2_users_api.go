@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gophero/goal/logx"
@@ -35,8 +34,8 @@ func (o *OAuth2UserApi) meUrl() string {
 }
 
 func (o *OAuth2UserApi) Me(accessToken string, ff *FieldFilter) (*UserInfo, error) {
-	body := strings.NewReader(NewGetParam().FilterFields(ff).Param())
-	req, err := http.NewRequest(http.MethodGet, o.meUrl(), body)
+	q := NewGetParam().FilterFields(ff).Param()
+	req, err := http.NewRequest(http.MethodGet, o.meUrl()+"?"+q, nil)
 	if err != nil {
 		return nil, errors.Wrapf(ErrApi, "request error: %v", err)
 	}
@@ -73,8 +72,8 @@ func (o *OAuth2UserApi) Followers(accessToken, id string, ff *FieldFilter, optio
 	for _, p := range options {
 		p(params)
 	}
-	body := strings.NewReader(params.Param())
-	req, err := http.NewRequest(http.MethodGet, url, body)
+	q := params.Param()
+	req, err := http.NewRequest(http.MethodGet, url+"?"+q, nil)
 	if err != nil {
 		return []*UserInfo{}, Meta{}, errors.Wrapf(ErrApi, "request error: %v", err)
 	}

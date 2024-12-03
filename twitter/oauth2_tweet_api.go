@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -54,8 +53,8 @@ func (o *OAuth2TweetApi) RetweetBy(accessToken, tweetId string, ff *FieldFilter,
 	for _, p := range options {
 		p(params)
 	}
-	body := strings.NewReader(params.Param())
-	req, err := http.NewRequest(http.MethodGet, url, body)
+	q := params.Param()
+	req, err := http.NewRequest(http.MethodGet, url+"?"+q, nil)
 	if err != nil {
 		return []*UserInfo{}, Meta{}, errors.Wrapf(ErrApi, "request error: %v", err)
 	}
