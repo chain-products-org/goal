@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"sync/atomic"
+	"time"
 
 	"github.com/gophero/goal/stringx"
 	"github.com/redis/go-redis/v9"
@@ -55,6 +56,10 @@ func (rl *Lock) Acquire() (bool, error) {
 	return rl.AcquireCtx(context.Background())
 }
 
+func (rl *Lock) AcquireWait() error {
+	return rl.AcquireWaitCtx(context.Background())
+}
+
 // AcquireCtx acquires the lock with the given ctx.
 func (rl *Lock) AcquireCtx(ctx context.Context) (bool, error) {
 	seconds := atomic.LoadUint32(&rl.seconds)
@@ -76,6 +81,23 @@ func (rl *Lock) AcquireCtx(ctx context.Context) (bool, error) {
 		return true, nil
 	}
 	return false, fmt.Errorf("unknown reply when acquiring lock for %s, resp: %v", rl.key, resp)
+}
+
+func (rl *Lock) AcquireWaitCtx(ctx context.Context) error {
+	ticker := time.NewTicker(100 * time.Millisecond)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return fmt.Errorf("unexpected ctx.Done(): %v", ctx.Err())
+		case <-ticker.C:
+			// wait until get lock successfully
+			b, err := rl.AcquireCtx(ctx)
+			if err == nil && b {
+				return nil
+			}
+		}
+	}
 }
 
 // Release releases the lock.

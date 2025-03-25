@@ -3,10 +3,12 @@ package redisx_test
 import (
 	"context"
 	"fmt"
-	"github.com/gophero/goal/redisx"
-	"github.com/gophero/goal/testx"
+	"sync"
 	"testing"
 	"time"
+
+	"github.com/gophero/goal/redisx"
+	"github.com/gophero/goal/testx"
 
 	"github.com/gophero/goal/assert"
 	"github.com/redis/go-redis/v9"
@@ -118,4 +120,37 @@ func TestRedisGet(t *testing.T) {
 			panic(err)
 		}
 	}
+}
+
+func TestLockWait(t *testing.T) {
+	client := NewMiniRedis()
+	var wg sync.WaitGroup
+	wg.Add(2)
+	start := time.Now().Unix()
+	end := time.Now().Unix()
+	go func() {
+		lock := redisx.NewLock(client, "test-key", 8)
+		t.Logf("goroutine 1 is acquiring lock")
+		err := lock.AcquireWait()
+		defer lock.Release()
+		assert.True(err == nil)
+		t.Log("goroutine 1 got lock")
+		time.Sleep(time.Second * 2)
+		wg.Done()
+	}()
+	time.Sleep(time.Millisecond * 100)
+	go func() {
+		lock := redisx.NewLock(client, "test-key", 8)
+		t.Log("goroutine 2 is acquiring lock")
+		err := lock.AcquireWait()
+		defer lock.Release()
+		assert.Nil(err)
+		t.Log("goroutine 2 got lock")
+		end = time.Now().Unix()
+		t.Log(end - start)
+		assert.True(end-start >= 2)
+		time.Sleep(time.Second)
+		wg.Done()
+	}()
+	wg.Wait()
 }
