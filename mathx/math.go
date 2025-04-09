@@ -26,6 +26,11 @@ func Div(dividend float64, divisor float64, precision int32) float64 {
 	return result
 }
 
+func DivFloatUp(dividend float64, divisor float64, precision int32) float64 {
+	result, _ := NewFromFloat(dividend).Div(NewFromFloat(divisor)).RoundUp(precision).Float64()
+	return result
+}
+
 func DivTrunc(dividend float64, divisor float64, precision int32) float64 {
 	result, _ := NewFromFloat(dividend).Div(NewFromFloat(divisor)).Truncate(precision).Float64()
 	return result
