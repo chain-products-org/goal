@@ -71,6 +71,30 @@ func BigIntStrPow(a, b string) *big.Int {
 	return new(big.Int).Exp(af, bf, nil)
 }
 
+func BigAdd(a, b *big.Int) *big.Int {
+	return new(big.Int).Add(a, b)
+}
+
+func BigSub(a, b *big.Int) *big.Int {
+	return new(big.Int).Sub(a, b)
+}
+
+func BigMul(a, b *big.Int) *big.Int {
+	return new(big.Int).Mul(a, b)
+}
+
+func BigDiv(a, b *big.Int) *big.Int {
+	return new(big.Int).Div(a, b)
+}
+
+func BigMod(a, b *big.Int) *big.Int {
+	return new(big.Int).Mod(a, b)
+}
+
+func BigPow(a *big.Int, b int64) *big.Int {
+	return new(big.Int).Exp(a, big.NewInt(b), nil)
+}
+
 func BigFloatAdd(a, b *big.Float) *big.Float {
 	return new(big.Float).Add(a, b)
 }
@@ -123,6 +147,11 @@ func Mul(multiplicand float64, multiplier float64) float64 {
 
 func Div(dividend float64, divisor float64, precision int32) float64 {
 	result, _ := NewFromFloat(dividend).DivRound(NewFromFloat(divisor), precision).Float64()
+	return result
+}
+
+func DivFloatUp(dividend float64, divisor float64, precision int32) float64 {
+	result, _ := NewFromFloat(dividend).Div(NewFromFloat(divisor)).RoundUp(precision).Float64()
 	return result
 }
 
