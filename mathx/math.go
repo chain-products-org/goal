@@ -11,6 +11,106 @@ func Add(addend1 float64, addend2 float64) float64 {
 	return result
 }
 
+func BigIntAdd(a, b *big.Int) *big.Int {
+	return new(big.Int).Add(a, b)
+}
+
+func BigIntStrAdd(a, b string) *big.Int {
+	af, _ := new(big.Int).SetString(a, 10)
+	bf, _ := new(big.Int).SetString(b, 10)
+	return new(big.Int).Add(af, bf)
+}
+
+func BigIntSub(a, b *big.Int) *big.Int {
+	return new(big.Int).Sub(a, b)
+}
+
+func BigIntStrSub(a, b string) *big.Int {
+	af, _ := new(big.Int).SetString(a, 10)
+	bf, _ := new(big.Int).SetString(b, 10)
+	return new(big.Int).Sub(af, bf)
+}
+
+func BigIntMul(a, b *big.Int) *big.Int {
+	return new(big.Int).Mul(a, b)
+}
+
+func BigIntStrMul(a, b string) *big.Int {
+	af, _ := new(big.Int).SetString(a, 10)
+	bf, _ := new(big.Int).SetString(b, 10)
+	return new(big.Int).Mul(af, bf)
+}
+
+func BigIntDiv(a, b *big.Int) *big.Int {
+	return new(big.Int).Div(a, b)
+}
+
+func BigIntStrDiv(a, b string) *big.Int {
+	af, _ := new(big.Int).SetString(a, 10)
+	bf, _ := new(big.Int).SetString(b, 10)
+	return new(big.Int).Div(af, bf)
+}
+
+func BigIntMod(a, b *big.Int) *big.Int {
+	return new(big.Int).Mod(a, b)
+}
+
+func BigIntStrMod(a, b string) *big.Int {
+	af, _ := new(big.Int).SetString(a, 10)
+	bf, _ := new(big.Int).SetString(b, 10)
+	return new(big.Int).Mod(af, bf)
+}
+
+func BigIntPow(a *big.Int, b int64) *big.Int {
+	return new(big.Int).Exp(a, big.NewInt(b), nil)
+}
+
+func BigIntStrPow(a, b string) *big.Int {
+	af, _ := new(big.Int).SetString(a, 10)
+	bf, _ := new(big.Int).SetString(b, 10)
+	return new(big.Int).Exp(af, bf, nil)
+}
+
+func BigFloatAdd(a, b *big.Float) *big.Float {
+	return new(big.Float).Add(a, b)
+}
+
+func BigFloatSub(a, b *big.Float) *big.Float {
+	return new(big.Float).Sub(a, b)
+}
+
+func BigFloatMul(a, b *big.Float) *big.Float {
+	return new(big.Float).Mul(a, b)
+}
+
+func BigFloatDiv(a, b *big.Float) *big.Float {
+	return new(big.Float).Quo(a, b)
+}
+
+func BigFloatStrAdd(a, b string) *big.Float {
+	af, _ := new(big.Float).SetString(a)
+	bf, _ := new(big.Float).SetString(b)
+	return new(big.Float).Add(af, bf)
+}
+
+func BigFloatStrSub(a, b string) *big.Float {
+	af, _ := new(big.Float).SetString(a)
+	bf, _ := new(big.Float).SetString(b)
+	return new(big.Float).Sub(af, bf)
+}
+
+func BigFloatStrMul(a, b string) *big.Float {
+	af, _ := new(big.Float).SetString(a)
+	bf, _ := new(big.Float).SetString(b)
+	return new(big.Float).Mul(af, bf)
+}
+
+func BigFloatStrDiv(a, b string) *big.Float {
+	af, _ := new(big.Float).SetString(a)
+	bf, _ := new(big.Float).SetString(b)
+	return new(big.Float).Quo(af, bf)
+}
+
 func Sub(minuend float64, subtrahend float64) float64 {
 	result, _ := NewFromFloat(minuend).Sub(NewFromFloat(subtrahend)).Float64()
 	return result
