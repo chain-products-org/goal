@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gophero/goal/random"
-	"github.com/gophero/goal/retry"
+	"github.com/chain-products-org/goal/random"
+	"github.com/chain-products-org/goal/retry"
 	"github.com/stretchr/testify/assert"
 )
 

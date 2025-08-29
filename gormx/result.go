@@ -2,7 +2,7 @@ package gormx
 
 import (
 	"errors"
-	"github.com/gophero/goal/errorx"
+	"github.com/chain-products-org/goal/errorx"
 	"gorm.io/gorm"
 )
 

@@ -2,7 +2,7 @@ package errorx
 
 import (
 	"context"
-	"github.com/gophero/goal/logx"
+	"github.com/chain-products-org/goal/logx"
 	"runtime/debug"
 )
 

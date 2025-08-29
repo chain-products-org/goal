@@ -2,7 +2,7 @@ package iox
 
 import (
 	"bufio"
-	"github.com/gophero/goal/errorx"
+	"github.com/chain-products-org/goal/errorx"
 	"io"
 	"os"
 	"strings"

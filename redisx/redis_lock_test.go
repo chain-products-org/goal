@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gophero/goal/redisx"
-	"github.com/gophero/goal/testx"
+	"github.com/chain-products-org/goal/redisx"
+	"github.com/chain-products-org/goal/testx"
 
-	"github.com/gophero/goal/assert"
+	"github.com/chain-products-org/goal/assert"
 	"github.com/redis/go-redis/v9"
 )
 

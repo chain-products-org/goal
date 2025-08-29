@@ -2,7 +2,7 @@ package base64x_test
 
 import (
 	"fmt"
-	"github.com/gophero/goal/ciphers/base64x"
+	"github.com/chain-products-org/goal/ciphers/base64x"
 	"reflect"
 	"testing"
 )

@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-contrib/i18n"
 	"github.com/gin-gonic/gin"
-	"github.com/gophero/goal/errorx"
+	"github.com/chain-products-org/goal/errorx"
 )
 
 var Resp = new(resp)

@@ -1,8 +1,8 @@
 package color_test
 
 import (
-	"github.com/gophero/goal/color"
-	"github.com/gophero/goal/testx"
+	"github.com/chain-products-org/goal/color"
+	"github.com/chain-products-org/goal/testx"
 	"strings"
 	"testing"
 )

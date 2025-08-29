@@ -3,7 +3,7 @@ package s3_test
 import (
 	"bytes"
 	"fmt"
-	"github.com/gophero/goal/aws/s3"
+	"github.com/chain-products-org/goal/aws/s3"
 	"os"
 	"testing"
 )

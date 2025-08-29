@@ -15,8 +15,8 @@ import (
 	confirm "github.com/gagliardetto/solana-go/rpc/sendAndConfirmTransaction"
 	"github.com/gagliardetto/solana-go/rpc/ws"
 	"github.com/gagliardetto/solana-go/text"
-	"github.com/gophero/goal/errorx"
-	"github.com/gophero/goal/httpx"
+	"github.com/chain-products-org/goal/errorx"
+	"github.com/chain-products-org/goal/httpx"
 )
 
 type SOLWallet struct {

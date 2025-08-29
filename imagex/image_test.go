@@ -15,7 +15,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gophero/goal/imagex"
+	"github.com/chain-products-org/goal/imagex"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -72,7 +72,7 @@ func TestDecodeFile(t *testing.T) {
 }
 
 func TestDecodeFromUrl(t *testing.T) {
-	// NOTE: raw image saved in github is from raw.githubusercontent.com, NOT https://github.com/gophero/goal/blob/dev/testdata/image/blue-purple-pink.png
+	// NOTE: raw image saved in github is from raw.githubusercontent.com, NOT https://github.com/chain-products-org/goal/blob/dev/testdata/image/blue-purple-pink.png
 	// which will report an error: image is not an png/unkown format
 	url := "https://raw.githubusercontent.com/gophero/goal/dev/testdata/image/blue-purple-pink.png"
 	resp, err := http.Get(url)

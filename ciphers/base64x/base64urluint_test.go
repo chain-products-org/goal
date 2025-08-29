@@ -1,8 +1,8 @@
 package base64x_test
 
 import (
-	"github.com/gophero/goal/ciphers/base64x"
-	"github.com/gophero/goal/testx"
+	"github.com/chain-products-org/goal/ciphers/base64x"
+	"github.com/chain-products-org/goal/testx"
 	"math/big"
 	"reflect"
 	"testing"

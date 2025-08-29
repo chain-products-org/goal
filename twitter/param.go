@@ -1,8 +1,8 @@
 package twitter
 
 import (
-	"github.com/gophero/goal/conv"
-	"github.com/gophero/goal/stringx"
+	"github.com/chain-products-org/goal/conv"
+	"github.com/chain-products-org/goal/stringx"
 )
 
 var GetParamOptions getParamOptions

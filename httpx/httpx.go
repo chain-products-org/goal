@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gophero/goal/errorx"
+	"github.com/chain-products-org/goal/errorx"
 )
 
 type Handler func(resp *http.Response)

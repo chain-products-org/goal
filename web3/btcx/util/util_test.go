@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/gophero/goal/httpx"
+	"github.com/chain-products-org/goal/httpx"
 )
 
 func TestImportWallet(t *testing.T) {

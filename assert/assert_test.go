@@ -1,8 +1,8 @@
 package assert_test
 
 import (
-	"github.com/gophero/goal/assert"
-	"github.com/gophero/goal/testx"
+	"github.com/chain-products-org/goal/assert"
+	"github.com/chain-products-org/goal/testx"
 	"testing"
 )
 

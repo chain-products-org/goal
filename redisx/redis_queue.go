@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gophero/goal/queue"
+	"github.com/chain-products-org/goal/queue"
 	"github.com/redis/go-redis/v9"
 )
 

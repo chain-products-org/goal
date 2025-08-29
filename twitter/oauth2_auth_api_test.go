@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gophero/goal/twitter"
+	"github.com/chain-products-org/goal/twitter"
 )
 
 var (

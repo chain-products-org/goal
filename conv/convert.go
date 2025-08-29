@@ -2,7 +2,7 @@ package conv
 
 import (
 	"fmt"
-	"github.com/gophero/goal/errorx"
+	"github.com/chain-products-org/goal/errorx"
 	"math/big"
 	"reflect"
 	"strconv"

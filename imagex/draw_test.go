@@ -6,8 +6,8 @@ import (
 	"image/color"
 	"testing"
 
-	"github.com/gophero/goal/fontx"
-	"github.com/gophero/goal/imagex"
+	"github.com/chain-products-org/goal/fontx"
+	"github.com/chain-products-org/goal/imagex"
 	"github.com/stretchr/testify/assert"
 )
 

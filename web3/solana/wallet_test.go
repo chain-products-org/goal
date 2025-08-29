@@ -6,7 +6,7 @@ import (
 
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
-	"github.com/gophero/goal/testx"
+	"github.com/chain-products-org/goal/testx"
 )
 
 var (

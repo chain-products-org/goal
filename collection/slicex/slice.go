@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/gophero/goal/stringx"
+	"github.com/chain-products-org/goal/stringx"
 )
 
 // basic functions

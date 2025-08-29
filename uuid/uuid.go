@@ -2,7 +2,7 @@ package uuid
 
 import (
 	"github.com/google/uuid"
-	"github.com/gophero/goal/valuex"
+	"github.com/chain-products-org/goal/valuex"
 	"strings"
 )
 

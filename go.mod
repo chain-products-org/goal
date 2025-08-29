@@ -1,4 +1,4 @@
-module github.com/gophero/goal
+module github.com/chain-products-org/goal
 
 go 1.20
 

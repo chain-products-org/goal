@@ -2,7 +2,7 @@ package iox_test
 
 import (
 	"fmt"
-	"github.com/gophero/goal/iox"
+	"github.com/chain-products-org/goal/iox"
 	"strings"
 	"testing"
 )

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gophero/goal/logx"
+	"github.com/chain-products-org/goal/logx"
 	"github.com/pkg/errors"
 )
 

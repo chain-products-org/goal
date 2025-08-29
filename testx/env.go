@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/alicebob/miniredis/v2"
 	"github.com/go-redis/redismock/v9"
-	"github.com/gophero/goal/logx"
-	"github.com/gophero/goal/redisx"
+	"github.com/chain-products-org/goal/logx"
+	"github.com/chain-products-org/goal/redisx"
 	"github.com/redis/go-redis/v9"
 	"time"
 )

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gophero/goal/collection/slicex"
+	"github.com/chain-products-org/goal/collection/slicex"
 )
 
 var ErrApi = fmt.Errorf("twitter api error")

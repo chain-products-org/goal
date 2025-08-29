@@ -2,8 +2,8 @@ package random_test
 
 import (
 	"fmt"
-	"github.com/gophero/goal/random"
-	"github.com/gophero/goal/testx"
+	"github.com/chain-products-org/goal/random"
+	"github.com/chain-products-org/goal/testx"
 	"testing"
 )
 

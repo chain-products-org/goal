@@ -2,7 +2,7 @@ package date
 
 import (
 	"bytes"
-	"github.com/gophero/goal/conv"
+	"github.com/chain-products-org/goal/conv"
 	"math"
 	"strconv"
 	"strings"

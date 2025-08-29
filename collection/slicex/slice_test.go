@@ -2,8 +2,8 @@ package slicex_test
 
 import (
 	"fmt"
-	"github.com/gophero/goal/collection/slicex"
-	"github.com/gophero/goal/testx"
+	"github.com/chain-products-org/goal/collection/slicex"
+	"github.com/chain-products-org/goal/testx"
 	"reflect"
 	"testing"
 )

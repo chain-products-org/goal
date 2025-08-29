@@ -5,7 +5,7 @@ import (
 	"image/color"
 	"image/draw"
 
-	"github.com/gophero/goal/mathx"
+	"github.com/chain-products-org/goal/mathx"
 	"golang.org/x/image/font"
 	"golang.org/x/image/math/fixed"
 )

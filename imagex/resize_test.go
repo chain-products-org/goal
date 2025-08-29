@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gophero/goal/errorx"
-	"github.com/gophero/goal/imagex"
+	"github.com/chain-products-org/goal/errorx"
+	"github.com/chain-products-org/goal/imagex"
 )
 
 var (

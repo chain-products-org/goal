@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/gophero/goal/errorx"
+	"github.com/chain-products-org/goal/errorx"
 )
 
 var defaultClient = &http.Client{

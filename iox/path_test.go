@@ -2,8 +2,8 @@ package iox_test
 
 import (
 	"fmt"
-	"github.com/gophero/goal/iox"
-	"github.com/gophero/goal/testx"
+	"github.com/chain-products-org/goal/iox"
+	"github.com/chain-products-org/goal/testx"
 	"os"
 	"path/filepath"
 	"testing"

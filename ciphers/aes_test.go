@@ -2,8 +2,8 @@ package ciphers_test
 
 import (
 	"fmt"
-	"github.com/gophero/goal/ciphers"
-	"github.com/gophero/goal/random"
+	"github.com/chain-products-org/goal/ciphers"
+	"github.com/chain-products-org/goal/random"
 	"testing"
 )
 

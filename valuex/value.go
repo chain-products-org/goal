@@ -1,7 +1,7 @@
 package valuex
 
 import (
-	"github.com/gophero/goal/errorx"
+	"github.com/chain-products-org/goal/errorx"
 	"golang.org/x/exp/constraints"
 )
 

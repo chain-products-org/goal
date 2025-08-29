@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gophero/goal/httpx"
+	"github.com/chain-products-org/goal/httpx"
 )
 
 // When running tests, the example code will be executed, and the example method must use fmt.println to output.

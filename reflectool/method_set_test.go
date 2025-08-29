@@ -2,7 +2,7 @@ package reflectool_test
 
 import (
 	"fmt"
-	"github.com/gophero/goal/reflectool"
+	"github.com/chain-products-org/goal/reflectool"
 	"testing"
 )
 

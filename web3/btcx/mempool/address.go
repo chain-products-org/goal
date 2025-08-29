@@ -3,9 +3,9 @@ package mempool
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gophero/goal/web3/btcx"
-	"github.com/gophero/goal/web3/btcx/mempool/model"
-	"github.com/gophero/goal/web3/btcx/util"
+	"github.com/chain-products-org/goal/web3/btcx"
+	"github.com/chain-products-org/goal/web3/btcx/mempool/model"
+	"github.com/chain-products-org/goal/web3/btcx/util"
 
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/wire"

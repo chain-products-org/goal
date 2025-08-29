@@ -3,7 +3,7 @@ package mathx
 import (
 	"math/big"
 
-	"github.com/gophero/goal/constraintx"
+	"github.com/chain-products-org/goal/constraintx"
 )
 
 func Add(addend1 float64, addend2 float64) float64 {

@@ -2,7 +2,7 @@ package twitter_test
 
 import (
 	"fmt"
-	"github.com/gophero/goal/twitter"
+	"github.com/chain-products-org/goal/twitter"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

@@ -3,7 +3,7 @@ package ord
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gophero/goal/cmd"
+	"github.com/chain-products-org/goal/cmd"
 
 	"github.com/pkg/errors"
 )

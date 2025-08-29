@@ -4,8 +4,8 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/gophero/goal/random"
-	"github.com/gophero/goal/testx"
+	"github.com/chain-products-org/goal/random"
+	"github.com/chain-products-org/goal/testx"
 )
 
 func TestRandomAlphabetic(t *testing.T) {

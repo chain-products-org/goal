@@ -5,8 +5,8 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/gophero/goal/conv"
-	"github.com/gophero/goal/valuex"
+	"github.com/chain-products-org/goal/conv"
+	"github.com/chain-products-org/goal/valuex"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 )

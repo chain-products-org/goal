@@ -2,7 +2,7 @@ package date_test
 
 import (
 	"fmt"
-	"github.com/gophero/goal/date"
+	"github.com/chain-products-org/goal/date"
 	"reflect"
 	"testing"
 	"time"

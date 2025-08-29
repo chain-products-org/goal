@@ -2,7 +2,7 @@ package prob
 
 import (
 	"fmt"
-	"github.com/gophero/goal/assert"
+	"github.com/chain-products-org/goal/assert"
 	"math/rand"
 	"time"
 )

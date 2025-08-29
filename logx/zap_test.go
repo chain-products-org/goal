@@ -2,7 +2,7 @@ package logx_test
 
 import (
 	"fmt"
-	"github.com/gophero/goal/logx"
+	"github.com/chain-products-org/goal/logx"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

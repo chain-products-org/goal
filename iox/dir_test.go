@@ -1,8 +1,8 @@
 package iox_test
 
 import (
-	"github.com/gophero/goal/iox"
-	"github.com/gophero/goal/testx"
+	"github.com/chain-products-org/goal/iox"
+	"github.com/chain-products-org/goal/testx"
 	"github.com/stretchr/testify/assert"
 	"path/filepath"
 	"testing"

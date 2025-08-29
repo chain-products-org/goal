@@ -1,8 +1,8 @@
 package mapx_test
 
 import (
-	"github.com/gophero/goal/collection/mapx"
-	"github.com/gophero/goal/testx"
+	"github.com/chain-products-org/goal/collection/mapx"
+	"github.com/chain-products-org/goal/testx"
 	"testing"
 )
 

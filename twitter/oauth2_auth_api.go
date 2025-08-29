@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gophero/goal/redisx"
-	"github.com/gophero/goal/stringx"
+	"github.com/chain-products-org/goal/redisx"
+	"github.com/chain-products-org/goal/stringx"
 
 	"github.com/pkg/errors"
 )

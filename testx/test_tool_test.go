@@ -1,7 +1,7 @@
 package testx_test
 
 import (
-	"github.com/gophero/goal/testx"
+	"github.com/chain-products-org/goal/testx"
 	"testing"
 )
 

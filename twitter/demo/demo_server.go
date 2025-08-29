@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gophero/goal/twitter"
+	"github.com/chain-products-org/goal/twitter"
 )
 
 var temp *template.Template

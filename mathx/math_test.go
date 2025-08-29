@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/gophero/goal/constraintx"
+	"github.com/chain-products-org/goal/constraintx"
 	"github.com/stretchr/testify/assert"
 )
 

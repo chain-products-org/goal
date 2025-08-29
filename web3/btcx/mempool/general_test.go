@@ -1,8 +1,8 @@
 package mempool_test
 
 import (
-	"github.com/gophero/goal/web3/btcx"
-	"github.com/gophero/goal/web3/btcx/mempool"
+	"github.com/chain-products-org/goal/web3/btcx"
+	"github.com/chain-products-org/goal/web3/btcx/mempool"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

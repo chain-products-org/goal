@@ -2,7 +2,7 @@ package printer
 
 import (
 	"fmt"
-	"github.com/gophero/goal/conv"
+	"github.com/chain-products-org/goal/conv"
 	"strconv"
 	"strings"
 )

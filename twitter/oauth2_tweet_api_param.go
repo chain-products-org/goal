@@ -3,8 +3,8 @@ package twitter
 import (
 	"encoding/json"
 
-	"github.com/gophero/goal/errorx"
-	"github.com/gophero/goal/logx"
+	"github.com/chain-products-org/goal/errorx"
+	"github.com/chain-products-org/goal/logx"
 )
 
 type PostTweetParam struct {

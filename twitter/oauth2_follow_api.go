@@ -3,7 +3,7 @@ package twitter
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/gophero/goal/errorx"
+	"github.com/chain-products-org/goal/errorx"
 	"github.com/pkg/errors"
 	"io"
 	"net/http"

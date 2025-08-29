@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gophero/goal/assert"
+	"github.com/chain-products-org/goal/assert"
 )
 
 func TestFormatCommaInt(t *testing.T) {
